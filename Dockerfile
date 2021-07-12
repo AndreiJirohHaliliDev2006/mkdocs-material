@@ -1,4 +1,4 @@
-# Copyright (c) 2016-2020 Martin Donath <martin.donath@squidfunk.com>
+# Copyright (c) 2016-2021 Martin Donath <martin.donath@squidfunk.com>
 
 # Permission is hereby granted, free of charge, to any person obtaining a copy
 # of this software and associated documentation files (the "Software"), to
@@ -18,13 +18,14 @@
 # FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS
 # IN THE SOFTWARE.
 
-FROM python:3.8.1-alpine3.11
+FROM python:3.9.2-alpine3.13
 
 # Build-time flags
 ARG WITH_PLUGINS=true
 
-# Packages directory
-ENV PACKAGES=/usr/local/lib/python3.8/site-packages
+# Environment variables
+ENV PACKAGES=/usr/local/lib/python3.9/site-packages
+ENV PYTHONDONTWRITEBYTECODE=1
 
 # Set build directory
 WORKDIR /tmp
@@ -37,8 +38,9 @@ COPY README.md README.md
 COPY requirements.txt requirements.txt
 COPY setup.py setup.py
 
-# Perform build and cleanup artifacts
+# Perform build and cleanup artifacts and caches
 RUN \
+  apk upgrade --update-cache -a && \
   apk add --no-cache \
     git \
     git-fast-import \
@@ -48,8 +50,8 @@ RUN \
   && \
     if [ "${WITH_PLUGINS}" = "true" ]; then \
       pip install --no-cache-dir \
-        'mkdocs-minify-plugin>=0.3' \
-        'mkdocs-redirects>=1.0'; \
+        "mkdocs-minify-plugin>=0.3" \
+        "mkdocs-redirects>=1.0"; \
     fi \
   && apk del .build gcc musl-dev \
   && \
@@ -59,7 +61,12 @@ RUN \
         ${PACKAGES}/material \
         ${PACKAGES}/mkdocs/themes/$theme; \
     done \
-  && rm -rf /tmp/*
+  && rm -rf /tmp/* /root/.cache \
+  && \
+    find ${PACKAGES} \
+      -type f \
+      -path "*/__pycache__/*" \
+      -exec rm -f {} \;
 
 # Set working directory
 WORKDIR /docs

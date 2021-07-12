@@ -1,5 +1,5 @@
 <!--
-  Copyright (c) 2016-2020 Martin Donath <martin.donath@squidfunk.com>
+  Copyright (c) 2016-2021 Martin Donath <martin.donath@squidfunk.com>
 
   Permission is hereby granted, free of charge, to any person obtaining a copy
   of this software and associated documentation files (the "Software"), to
@@ -58,7 +58,7 @@
       {% endif %}
 
       <!-- Favicon -->
-      <link rel="shortcut icon" href="{{ config.theme.favicon | url }}" />
+      <link rel="icon" href="{{ config.theme.favicon | url }}" />
 
       <!-- Generator banner -->
       <meta
@@ -119,13 +119,9 @@
           }}&display=fallback"
         />
         <style>
-          body, input {
-            font-family: "{{ font.text }}",
-              -apple-system, BlinkMacSystemFont, Helvetica, Arial, sans-serif;
-          }
-          pre, code, kbd {
-            font-family: "{{ font.code }}",
-              SFMono-Regular, Consolas, Menlo, monospace;
+          :root {
+            --md-text-font-family: "{{ font.text }}";
+            --md-code-font-family: "{{ font.code }}";
           }
         </style>
       {% endif %}
@@ -147,16 +143,14 @@
 
     <!-- Analytics -->
     {% block analytics %}
-      {% if config.google_analytics %}
-        {% include "partials/integrations/analytics.html" %}
-      {% endif %}
+      {% include "partials/integrations/analytics.html" %}
     {% endblock %}
 
     <!-- Custom front matter -->
     {% block extrahead %}{% endblock %}
   </head>
 
-  <!-- Text direction and color palette, if defined -->
+  <!-- Set text direction and color palette, if defined -->
   {% set direction = config.theme.direction or lang.t('direction') %}
   {% if config.theme.palette %}
     {% set palette = config.theme.palette %}
@@ -172,21 +166,18 @@
       data-md-color-primary="{{ primary }}"
       data-md-color-accent="{{ accent }}"
     >
-
-      <!-- Experimental: set color scheme based on preference -->
-      {% if "preference" == scheme %}
-        <script>
-          if (matchMedia("(prefers-color-scheme: dark)").matches)
-            document.body.setAttribute("data-md-color-scheme", "slate")
-        </script>
-      {% endif %}
-
   {% else %}
     <body dir="{{ direction }}">
   {% endif %}
 
     <!-- Retrieve features from configuration -->
-    {%  set features = config.theme.features or [] %}
+    {% set features = config.theme.features or [] %}
+    {% include "partials/javascripts/base.html" %}
+
+    <!-- User preference: color palette -->
+    {% if not config.theme.palette is mapping %}
+      {% include "partials/javascripts/palette.html" %}
+    {% endif %}
 
     <!--
       State toggles - we need to set autocomplete="off" in order to reset the
@@ -210,7 +201,7 @@
     <!-- Overlay for expanded drawer -->
     <label class="md-overlay" for="__drawer"></label>
 
-    <!-- Link to skip to content -->
+    <!-- Skip to content -->
     <div data-md-component="skip">
       {% if page.toc | first is defined %}
         {% set skip = page.toc | first %}
@@ -231,12 +222,12 @@
       {% endif %}
     </div>
 
-    <!-- Application header -->
+    <!-- Header -->
     {% block header %}
       {% include "partials/header.html" %}
     {% endblock %}
 
-    <!-- Container, necessary for web-application context -->
+    <!-- Container -->
     <div class="md-container" data-md-component="container">
 
       <!-- Hero teaser -->
@@ -263,7 +254,8 @@
               {% endif %}
               <div
                 class="md-sidebar md-sidebar--primary"
-                data-md-component="navigation"
+                data-md-component="sidebar"
+                data-md-type="navigation"
                 {{ hidden }}
               >
                 <div class="md-sidebar__scrollwrap">
@@ -281,7 +273,8 @@
               {% endif %}
               <div
                 class="md-sidebar md-sidebar--secondary"
-                data-md-component="toc"
+                data-md-component="sidebar"
+                data-md-type="toc"
                 {{ hidden }}
               >
                 <div class="md-sidebar__scrollwrap">
@@ -294,7 +287,7 @@
           {% endblock %}
 
           <!-- Article -->
-          <div class="md-content">
+          <div class="md-content" data-md-component="content">
             <article class="md-content__inner md-typeset">
 
               <!-- Content -->
@@ -320,7 +313,7 @@
                   <h1>{{ page.title | d(config.site_name, true)}}</h1>
                 {% endif %}
 
-                <!-- Content -->
+                <!-- Markdown content -->
                 {{ page.content }}
 
                 <!-- Last update of source file -->
@@ -328,7 +321,7 @@
                   {% if page.meta.git_revision_date_localized or
                         page.meta.revision_date
                   %}
-                    {% include "partials/source-date.html" %}
+                    {% include "partials/source-file.html" %}
                   {% endif %}
                 {% endif %}
               {% endblock %}
@@ -340,21 +333,44 @@
             </article>
           </div>
         </div>
+
+        <!-- Back-to-top button -->
+        {% if "navigation.top" in features %}
+          <a
+            href="#"
+            class="md-top md-icon"
+            data-md-component="top"
+            data-md-state="hidden"
+          >
+            {% include ".icons/material/arrow-up.svg" %}
+            {{ lang.t('top.title') }}
+          </a>
+        {% endif %}
       </main>
 
-      <!-- Application footer -->
+      <!-- Footer -->
       {% block footer %}
         {% include "partials/footer.html" %}
       {% endblock %}
     </div>
 
-    <!-- Theme-related JavaScript -->
-    {% block scripts %}
-      <script src="{{ 'assets/javascripts/vendor.js' | url }}"></script>
-      <script src="{{ 'assets/javascripts/bundle.js' | url }}"></script>
+    <!-- Dialog -->
+    <div class="md-dialog" data-md-component="dialog">
+      <div class="md-dialog__inner md-typeset"></div>
+    </div>
+
+    <!-- Theme-related configuration -->
+    {% block config %}
+      {%- set app = {
+        "base": base_url,
+        "features": features,
+        "translations": {},
+        "search": "assets/javascripts/workers/search.js" | url,
+        "version": config.extra.version or None
+      } -%}
 
       <!-- Translations -->
-      {%- set translations = {} -%}
+      {%- set translations = app.translations -%}
       {%- for key in [
         "clipboard.copy",
         "clipboard.copied",
@@ -368,27 +384,21 @@
         "search.result.other",
         "search.result.more.one",
         "search.result.more.other",
-        "search.result.term.missing"
+        "search.result.term.missing",
+        "select.version.title"
       ] -%}
         {%- set _ = translations.update({ key: lang.t(key) }) -%}
       {%- endfor -%}
-      <script id="__lang" type="application/json">
-        {{- translations | tojson -}}
-      </script>
 
-      <!-- Application configuration -->
-      {% block config %}{% endblock %}
-
-      <!-- Application initialization -->
-      <script>
-        app = initialize({
-          base: "{{ base_url }}",
-          features: {{ features or [] | tojson }},
-          search: Object.assign({
-            worker: "{{ 'assets/javascripts/worker/search.js' | url }}"
-          }, typeof search !== "undefined" && search)
-        })
+      <!-- Configuration -->
+      <script id="__config" type="application/json">
+        {{- app | tojson -}}
       </script>
+    {% endblock %}
+
+    <!-- Theme-related JavaScript -->
+    {% block scripts %}
+      <script src="{{ 'assets/javascripts/bundle.js' | url }}"></script>
 
       <!-- Custom JavaScript -->
       {% for path in config["extra_javascript"] %}

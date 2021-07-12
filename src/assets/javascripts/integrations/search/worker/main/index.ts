@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2016-2020 Martin Donath <martin.donath@squidfunk.com>
+ * Copyright (c) 2016-2021 Martin Donath <martin.donath@squidfunk.com>
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to
@@ -20,7 +20,7 @@
  * IN THE SOFTWARE.
  */
 
-import "lunr"
+import lunr from "lunr"
 
 import { Search, SearchIndexConfig } from "../../_"
 import {
@@ -62,8 +62,8 @@ let index: Search
 /**
  * Fetch (= import) multi-language support through `lunr-languages`
  *
- * This function will automatically import the stemmers necessary to process
- * the languages which were given through the search index configuration.
+ * This function automatically imports the stemmers necessary to process the
+ * languages, which are defined through the search index configuration.
  *
  * If the worker runs inside of an `iframe` (when using `iframe-worker` as
  * a shim), the base URL for the stemmers to be loaded must be determined by
@@ -72,7 +72,7 @@ let index: Search
  *
  * @param config - Search index configuration
  *
- * @return Promise resolving with no result
+ * @returns Promise resolving with no result
  */
 async function setupSearchLanguages(
   config: SearchIndexConfig
@@ -91,8 +91,23 @@ async function setupSearchLanguages(
   /* Add scripts for languages */
   const scripts = []
   for (const lang of config.lang) {
-    if (lang === "ja") scripts.push(`${base}/tinyseg.min.js`)
-    if (lang !== "en") scripts.push(`${base}/min/lunr.${lang}.min.js`)
+    switch (lang) {
+
+      /* Add segmenter for Japanese */
+      case "ja":
+        scripts.push(`${base}/tinyseg.js`)
+        break
+
+      /* Add segmenter for Hindi and Thai */
+      case "hi":
+      case "th":
+        scripts.push(`${base}/wordcut.js`)
+        break
+    }
+
+    /* Add language support */
+    if (lang !== "en")
+      scripts.push(`${base}/min/lunr.${lang}.min.js`)
   }
 
   /* Add multi-language support */
@@ -116,7 +131,7 @@ async function setupSearchLanguages(
  *
  * @param message - Source message
  *
- * @return Target message
+ * @returns Target message
  */
 export async function handler(
   message: SearchMessage
@@ -148,6 +163,10 @@ export async function handler(
  * Worker
  * ------------------------------------------------------------------------- */
 
+/* @ts-ignore - expose Lunr.js in global scope, or stemmers will not work */
+self.lunr = lunr
+
+/* Handle messages */
 addEventListener("message", async ev => {
   postMessage(await handler(ev.data))
 })

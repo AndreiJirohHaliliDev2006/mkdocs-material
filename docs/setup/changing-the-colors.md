@@ -32,7 +32,7 @@ theme:
 
 _Click on a tile to change the color scheme_:
 
-<div class="tx-switch">
+<div class="mdx-switch">
   <button data-md-color-scheme="default"><code>default</code></button>
   <button data-md-color-scheme="slate"><code>slate</code></button>
 </div>
@@ -43,21 +43,11 @@ _Click on a tile to change the color scheme_:
     button.addEventListener("click", function() {
       var attr = this.getAttribute("data-md-color-scheme")
       document.body.setAttribute("data-md-color-scheme", attr)
-      var name = document.querySelector("#__code_0 code span:nth-child(7)")
+      var name = document.querySelector("#__code_1 code span:nth-child(7)")
       name.textContent = attr
     })
   })
 </script>
-
-The _color scheme_ can also be set based on _user preference_, which makes use
-of the `prefers-color-scheme` media query, by setting the value in `mkdocs.yml`
-to `preference`:
-
-``` yaml
-theme:
-  palette:
-    scheme: preference
-```
 
   [3]: https://github.com/squidfunk/mkdocs-material/blob/master/src/assets/stylesheets/palette/_scheme.scss
 
@@ -77,7 +67,7 @@ theme:
 
 _Click on a tile to change the primary color_:
 
-<div class="tx-switch">
+<div class="mdx-switch">
   <button data-md-color-primary="red"><code>red</code></button>
   <button data-md-color-primary="pink"><code>pink</code></button>
   <button data-md-color-primary="purple"><code>purple</code></button>
@@ -138,7 +128,7 @@ _Click on a tile to change the accent color_:
   }
 </style>
 
-<div class="tx-switch">
+<div class="mdx-switch">
   <button data-md-color-accent="red"><code>red</code></button>
   <button data-md-color-accent="pink"><code>pink</code></button>
   <button data-md-color-accent="purple"><code>purple</code></button>
@@ -171,7 +161,79 @@ _Click on a tile to change the accent color_:
 
   [5]: https://github.com/squidfunk/mkdocs-material/blob/master/src/assets/stylesheets/palette/_accent.scss
 
----
+### Color palette toggle
+
+[:octicons-file-code-24: Source][6] · :octicons-milestone-24: Default: _none_
+
+It's also possible to offer a list of color palettes to the user, each of which
+can include a [`scheme`][7], [`primary`][8] and [`accent`][9] color each. The
+user can toggle between those color palettes:
+
+``` yaml hl_lines="4-6 8-10"
+theme:
+  palette:
+    - scheme: default
+      toggle:
+        icon: material/toggle-switch-off-outline
+        name: Switch to dark mode
+    - scheme: slate
+      toggle:
+        icon: material/toggle-switch
+        name: Switch to light mode
+```
+
+The following fields must be set for each toggle:
+
+`icon`{ #icon }
+
+:   :octicons-milestone-24: Default: _none_ · :octicons-alert-24: Required –
+    This field must point to a valid icon path referencing [any icon bundled
+    with the theme][10], or the build will not succeed. Some popular
+    combinations:
+
+    * :material-toggle-switch-off-outline: + :material-toggle-switch: – `material/toggle-switch-off-outline` + `material/toggle-switch`
+    * :material-weather-sunny: + :material-weather-night: – `material/weather-sunny` + `material/weather-night`
+    * :material-eye-outline: + :material-eye: – `material/eye-outline` + `material/eye`
+    * :material-lightbulb-outline: + :material-lightbulb: – `material/lightbulb-outline` + `material/lightbulb`
+
+`name`{ #name }
+
+:   :octicons-milestone-24: Default: _none_ · :octicons-alert-24: Required –
+    This field is used as the toggle's `title` attribute and should be set to a
+    discernable name to improve accessibility.
+
+  [6]: https://github.com/squidfunk/mkdocs-material/blob/master/src/partials/header.html
+  [7]: #color-scheme
+  [8]: #primary-color
+  [9]: #accent-color
+  [10]: https://github.com/squidfunk/mkdocs-material/tree/master/material/.icons
+
+### System preference
+
+[:octicons-file-code-24: Source][6] · :octicons-milestone-24: Default: _none_
+
+In order to automatically set the color palette to the user's system preference,
+a media query can be set as part of the `media` field next to the toggle
+definition in `mkdocs.yml`:
+
+``` yaml hl_lines="3 8"
+theme:
+  palette:
+    - media: "(prefers-color-scheme: light)"
+      scheme: default
+      toggle:
+        icon: material/toggle-switch-off-outline
+        name: Switch to dark mode
+    - media: "(prefers-color-scheme: dark)"
+      scheme: slate
+      toggle:
+        icon: material/toggle-switch
+        name: Switch to light mode
+```
+
+When the user first visits your site, the media queries are evaluated in the
+order of their definition. The first media query that matches selects the
+default color palette.
 
 !!! warning "Accessibility – not all color combinations work well"
 
@@ -181,94 +243,19 @@ _Click on a tile to change the accent color_:
     sure that the color combination of your choosing provides enough contrast
     and tweak CSS variables where necessary.
 
-### Color palette toggle
-
-[:octicons-file-code-24: Source][6] ·
-:octicons-beaker-24: Experimental ·
-[:octicons-heart-fill-24:{: .tx-heart } Insiders only][6]{: .tx-insiders }
-
-[Insiders][6] can easily add multiple color palettes, including a [scheme][8],
-[primary][9] and [accent][10] color each, and let the user choose. A color
-palette toggle can be added via `mkdocs.yml`:
-
-``` yaml
-theme:
-  palette:
-
-    # Toggle light mode
-    - scheme: default
-      primary: indigo
-      accent: indigo
-      toggle:
-        icon: material/toggle-switch
-        name: Switch to light mode
-
-    # Toggle dark mode
-    - scheme: slate
-      primary: blue
-      accent: blue
-      toggle:
-        icon: material/toggle-switch-off-outline
-        name: Switch to dark mode
-```
-
-This will render a color palette toggle in the header next to the search bar:
-
-<figure markdown="1">
-
-[![Color palette toggle][11]][11]
-
-  <figcaption markdown="1">
-
-A demo is worth a thousand words — check it out at
-[squidfunk.github.io/mkdocs-material-insiders][7]
-
-  </figcaption>
-</figure>
-
-The `toggle` field allows to specify an `icon` and `name` for each palette. The
-toggle is rendered next to the search bar and will cycle through all defined
-color palettes:
-
-`icon`{: #icon }
-
-:   :octicons-milestone-24: Default: _none_ · :octicons-alert-24: Required –
-    This field must point to a valid icon path referencing [any icon bundled
-    with the theme][12], or the build will not succeed. Some popular
-    combinations:
-
-    * :material-toggle-switch-off-outline: + :material-toggle-switch: – `material/toggle-switch-off-outline` + `material/toggle-switch`
-    * :material-weather-sunny: + :material-weather-night: – `material/weather-sunny` + `material/weather-night`
-    * :material-eye-outline: + :material-eye: – `material/eye-outline` + `material/eye`
-    * :material-lightbulb-outline: + :material-lightbulb: – `material/lightbulb-outline` + `material/lightbulb`
-
-`name`{: #name }
-
-:   :octicons-milestone-24: Default: _none_ · :octicons-alert-24: Required –
-    This field is used as the toggle's `title` attribute and should be set to a
-    discernable name to improve accessibility.
-
-  [6]: ../insiders.md
-  [7]: https://squidfunk.github.io/mkdocs-material-insiders/setup/changing-the-colors
-  [8]: #color-scheme
-  [9]: #primary-color
-  [10]: #accent-color
-  [11]: ../assets/screenshots/color-palette-toggle.png
-  [12]: https://github.com/squidfunk/mkdocs-material/tree/master/material/.icons
-
 ## Customization
 
 ### Custom colors
 
-[:octicons-file-code-24: Source][13] ·
+[:octicons-file-code-24: Source][11] ·
 :octicons-mortar-board-24: Difficulty: _easy_
 
-Material for MkDocs implements colors using [CSS variables][14] (custom
+Material for MkDocs implements colors using [CSS variables][12] (custom
 properties). If you want to customize the colors beyond the palette (e.g. to
-use your brand-specific colors), you can add an [additional stylesheet][15] and
+use your brand-specific colors), you can add an [additional stylesheet][13] and
 tweak the values of the CSS variables.
 
-Let's say you're :fontawesome-brands-youtube:{: style="color: #EE0F0F" }
+Let's say you're :fontawesome-brands-youtube:{ style="color: #EE0F0F" }
 __YouTube__, and want to set the primary color to your brand's palette. Just
 add:
 
@@ -280,23 +267,23 @@ add:
 }
 ```
 
-See the file containing the [color definitions][13] for a list of all CSS
+See the file containing the [color definitions][11] for a list of all CSS
 variables.
 
-  [13]: https://github.com/squidfunk/mkdocs-material/blob/master/src/assets/stylesheets/main/_colors.scss
-  [14]: https://developer.mozilla.org/en-US/docs/Web/CSS/Using_CSS_custom_properties
-  [15]: ../customization.md#additional-css
+  [11]: https://github.com/squidfunk/mkdocs-material/blob/master/src/assets/stylesheets/main/_colors.scss
+  [12]: https://developer.mozilla.org/en-US/docs/Web/CSS/Using_CSS_custom_properties
+  [13]: ../customization.md#additional-css
 
 
 ### Custom color schemes
 
-[:octicons-file-code-24: Source][13] ·
+[:octicons-file-code-24: Source][11] ·
 :octicons-mortar-board-24: Difficulty: _easy_
 
 Besides overriding specific colors, you can create your own, named color scheme
 by wrapping the definitions in the `#!css [data-md-color-scheme="..."]`
-[attribute selector][16], which you can then set via `mkdocs.yml` as described
-in the [color schemes][8] section:
+[attribute selector][14], which you can then set via `mkdocs.yml` as described
+in the [color schemes][7] section:
 
 ``` css
 [data-md-color-scheme="youtube"] {
@@ -316,4 +303,4 @@ can tune the `slate` theme with:
 }
 ```
 
-  [16]: https://www.w3.org/TR/selectors-4/#attribute-selectors
+  [14]: https://www.w3.org/TR/selectors-4/#attribute-selectors

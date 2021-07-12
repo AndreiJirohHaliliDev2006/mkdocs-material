@@ -1,5 +1,5 @@
 ////
-/// Copyright (c) 2016-2020 Martin Donath <martin.donath@squidfunk.com>
+/// Copyright (c) 2016-2021 Martin Donath <martin.donath@squidfunk.com>
 ///
 /// Permission is hereby granted, free of charge, to any person obtaining a
 /// copy of this software and associated documentation files (the "Software"),
@@ -39,9 +39,6 @@
   box-shadow:
     0 0           px2rem(4px) rgba(0, 0, 0, 0),
     0 px2rem(4px) px2rem(8px) rgba(0, 0, 0, 0);
-  transition:
-    color            250ms,
-    background-color 250ms;
 
   // [print]: Hide header
   @media print {
@@ -54,51 +51,51 @@
       0 0           px2rem(4px) rgba(0, 0, 0, 0.1),
       0 px2rem(4px) px2rem(8px) rgba(0, 0, 0, 0.2);
     transition:
-      transform        250ms cubic-bezier(0.1, 0.7, 0.1, 1),
-      color            250ms,
-      background-color 250ms,
-      box-shadow       250ms;
+      transform  250ms cubic-bezier(0.1, 0.7, 0.1, 1),
+      box-shadow 250ms;
   }
 
   // Header in hidden state, i.e. moved out of sight
   &[data-md-state="hidden"] {
     transform: translateY(-100%);
     transition:
-      transform        250ms cubic-bezier(0.8, 0, 0.6, 1),
-      color            250ms,
-      background-color 250ms,
-      box-shadow       250ms;
+      transform  250ms cubic-bezier(0.8, 0, 0.6, 1),
+      box-shadow 250ms;
   }
-}
 
-// Header navigation - if the header exceeds the default height of `48px`, i.e.
-// by adding a bigger logo, the items are agned at the center
-.md-header-nav {
-  display: flex;
-  align-items: center;
-  padding: 0 px2rem(4px);
+  // Header wrapper
+  &__inner {
+    display: flex;
+    align-items: center;
+    padding: 0 px2rem(4px);
+  }
 
-  // Header navigation button
+  // Header button
   &__button {
     position: relative;
     z-index: 1;
-    display: inline-block;
     margin: px2rem(4px);
     padding: px2rem(8px);
     color: currentColor;
     vertical-align: middle;
+    outline-color: var(--md-accent-fg-color);
     cursor: pointer;
     transition: opacity 250ms;
 
-    // Button on focus/hover
-    &:focus,
+    // Button on hover
     &:hover {
       opacity: 0.7;
+    }
+
+    // Header button is visible
+    &:not([hidden]) {
+      display: inline-block;
     }
 
     // Hide outline for pointer devices
     &:not(.focus-visible) {
       outline: none;
+      -webkit-tap-highlight-color: transparent;
     }
 
     // Button with logo, pointing to `config.site_url`
@@ -131,7 +128,7 @@
 
       // [no-js]: Hide button
       .no-js & {
-        display: none
+        display: none;
       }
 
       // Adjust for right-to-left languages
@@ -154,7 +151,7 @@
     }
   }
 
-  // Header navigation topic
+  // Header topic
   &__topic {
     position: absolute;
     display: flex;
@@ -180,7 +177,7 @@
     }
   }
 
-  // Header navigation title
+  // Header title
   &__title {
     flex-grow: 1;
     height: px2rem(48px);
@@ -190,7 +187,7 @@
     line-height: px2rem(48px);
 
     // Header title in active state, i.e. page title is visible
-    &[data-md-state="active"] .md-header-nav__topic {
+    &[data-md-state="active"] .md-header__topic {
       z-index: -1;
       transform: translateX(px2rem(-25px));
       opacity: 0;
@@ -205,7 +202,7 @@
       }
 
       // Second header topic - title of the current page
-      & + .md-header-nav__topic {
+      + .md-header__topic {
         z-index: 0;
         transform: translateX(0);
         opacity: 1;
@@ -217,10 +214,30 @@
     }
 
     // Add ellipsis in case of overflowing text
-    > .md-header-nav__ellipsis {
+    > .md-header__ellipsis {
       position: relative;
       width: 100%;
       height: 100%;
+    }
+  }
+
+  // Header option
+  &__option {
+    display: flex;
+    flex-shrink: 0;
+    max-width: 100%;
+    white-space: nowrap;
+    transition:
+      max-width  0ms 250ms,
+      opacity  250ms 250ms;
+
+    // Hide toggle when search is active
+    [data-md-toggle="search"]:checked ~ .md-header & {
+      max-width: 0;
+      opacity: 0;
+      transition:
+        max-width 0ms,
+        opacity   0ms;
     }
   }
 

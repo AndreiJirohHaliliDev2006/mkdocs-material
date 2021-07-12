@@ -14,7 +14,7 @@ mkdocs new .
 
 Alternatively, if you're running Material for MkDocs from within Docker, use:
 
-=== "Unix"
+=== "Unix, Powershell"
 
     ```
     docker run --rm -it -v ${PWD}:/docs squidfunk/mkdocs-material new .
@@ -41,9 +41,9 @@ This will create the following structure:
 
 ### Minimal configuration
 
-To enable the theme, you can now simply add the following lines to `mkdocs.yml`.
-Note that since there are several [installation methods][2], configuration will
-be slightly different:
+Simply add the following lines to `mkdocs.yml` to enable the theme. Note that
+since there are several [installation methods][2], configuration might be
+slightly different:
 
 === "pip, docker"
 
@@ -91,7 +91,7 @@ Material for MkDocs comes with many configuration options. The _setup_ section
 explains in great detail how to configure and customize colors, fonts, icons
 and much more:
 
-<div class="tx-columns" markdown="1">
+<div class="mdx-columns" markdown="1">
 
 - [Changing the colors][5]
 - [Changing the fonts][6]
@@ -100,11 +100,12 @@ and much more:
 - [Setting up navigation][9]
 - [Setting up site search][10]
 - [Setting up site analytics][11]
-- [Setting up versioning][12]
-- [Setting up the header][13]
-- [Setting up the footer][14]
-- [Adding a git repository][15]
-- [Adding a comment system][16]
+- [Setting up tags][12]
+- [Setting up versioning][13]
+- [Setting up the header][14]
+- [Setting up the footer][15]
+- [Adding a git repository][16]
+- [Adding a comment system][17]
 
 </div>
 
@@ -115,11 +116,12 @@ and much more:
   [9]: setup/setting-up-navigation.md
   [10]: setup/setting-up-site-search.md
   [11]: setup/setting-up-site-analytics.md
-  [12]: setup/setting-up-versioning.md
-  [13]: setup/setting-up-the-header.md
-  [14]: setup/setting-up-the-footer.md
-  [15]: setup/adding-a-git-repository.md
-  [16]: setup/adding-a-comment-system.md
+  [12]: setup/setting-up-tags.md
+  [13]: setup/setting-up-versioning.md
+  [14]: setup/setting-up-the-header.md
+  [15]: setup/setting-up-the-footer.md
+  [16]: setup/adding-a-git-repository.md
+  [17]: setup/adding-a-comment-system.md
 
 ## Previewing as you write
 
@@ -133,7 +135,7 @@ mkdocs serve
 
 If you're running Material for MkDocs from within Docker, use:
 
-=== "Unix"
+=== "Unix, Powershell"
 
     ```
     docker run --rm -it -p 8000:8000 -v ${PWD}:/docs squidfunk/mkdocs-material
@@ -145,12 +147,12 @@ If you're running Material for MkDocs from within Docker, use:
     docker run --rm -it -p 8000:8000 -v "%cd%":/docs squidfunk/mkdocs-material
     ```
 
-Point your browser to [localhost:8000][17] and you should see:
+Point your browser to [localhost:8000][18] and you should see:
 
-[![Creating your site][18]][18]
+[![Creating your site][19]][19]
 
-  [17]: http://localhost:8000
-  [18]: assets/screenshots/creating-your-site.png
+  [18]: http://localhost:8000
+  [19]: assets/screenshots/creating-your-site.png
 
 ## Building your site
 
@@ -163,8 +165,8 @@ mkdocs build
 
 The contents of this directory make up your project documentation. There's no
 need for operating a database or server, as it is completely self-contained.
-The site can be hosted on [GitHub Pages][19], [GitLab Pages][20], a CDN of your
+The site can be hosted on [GitHub Pages][20], [GitLab Pages][21], a CDN of your
 choice or your private web space.
 
-  [19]: publishing-your-site.md#github-pages
-  [20]: publishing-your-site.md#gitlab-pages
+  [20]: publishing-your-site.md#github-pages
+  [21]: publishing-your-site.md#gitlab-pages

@@ -1,5 +1,5 @@
 ////
-/// Copyright (c) 2016-2020 Martin Donath <martin.donath@squidfunk.com>
+/// Copyright (c) 2016-2021 Martin Donath <martin.donath@squidfunk.com>
 ///
 /// Permission is hereby granted, free of charge, to any person obtaining a
 /// copy of this software and associated documentation files (the "Software"),
@@ -36,7 +36,7 @@ $admonitions: (
   failure fail missing:       close-circle $clr-red-a200,
   danger error:               flash-circle $clr-red-a400,
   bug:                        bug $clr-pink-a400,
-  example:                    format-list-numbered $clr-deep-purple-a400,
+  example:                    format-list-numbered $clr-deep-purple-a200,
   quote cite:                 format-quote-close $clr-grey
 ) !default;
 
@@ -47,9 +47,8 @@ $admonitions: (
 // Icon definitions
 :root {
   @each $names, $props in $admonitions {
-    --md-admonition-icon--#{nth($names, 1)}: svg-load(
-      "@mdi/svg/svg/#{nth($props, 1)}.svg"
-    );
+    --md-admonition-icon--#{nth($names, 1)}:
+      svg-load("material/#{nth($props, 1)}.svg");
   }
 }
 
@@ -84,9 +83,10 @@ $admonitions: (
       border-left: none;
     }
 
-    // Adjust spacing for nested admonitions
+    // Adjust vertical spacing for nested admonitions
     .admonition {
-      margin: 1em 0;
+      margin-top: 1em;
+      margin-bottom: 1em;
     }
 
     // Adjust spacing for contained table wrappers
@@ -149,17 +149,6 @@ $admonitions: (
         right: px2rem(12px);
         left: initial;
       }
-    }
-
-    // Omit background on inline code blocks, as they don't go well with the
-    // pastelly tones applied to admonition titles
-    code {
-      margin: initial;
-      padding: initial;
-      color: currentColor;
-      background-color: transparent;
-      border-radius: initial;
-      box-shadow: none;
     }
 
     // Adjust spacing on last tabbed block container child - if the tabbed

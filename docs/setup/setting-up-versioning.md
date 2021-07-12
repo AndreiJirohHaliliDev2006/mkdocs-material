@@ -16,9 +16,7 @@ documentation remain untouched.
 ### Versioning
 
 [:octicons-file-code-24: Source][2] ·
-[:octicons-package-24: Utility][1] ·
-:octicons-beaker-24: Experimental ·
-[:octicons-heart-fill-24:{: .tx-heart } Insiders only][2]{: .tx-insiders }
+[:octicons-package-24: Utility][1]
 
 [mike][1] makes it easy to deploy multiple versions of your project
 documentation. It integrates natively with Material for MkDocs and can be
@@ -27,7 +25,7 @@ enabled via `mkdocs.yml`:
 ``` yaml
 extra:
   version:
-    method: mike
+    provider: mike
 ```
 
 This will render a version selector in the header next to the title of your
@@ -62,16 +60,97 @@ _Note that you don't need to run_ `mike install-extras` _as noted in the
 [official documentation][6], as [mike][1] is now natively integrated with
 Material for MkDocs._
 
-  [2]: ../insiders.md
+  [2]: https://github.com/squidfunk/mkdocs-material/blob/master/src/partials/header.html
   [3]: ../assets/screenshots/versioning.png
   [4]: https://squidfunk.github.io/mkdocs-material-example-versioning/
   [5]: https://github.com/jimporter/mike#why-use-mike
   [6]: https://github.com/jimporter/mike#usage
 
+### Version warning
+
+[:octicons-file-code-24: Source][7] ·
+[:octicons-heart-fill-24:{ .mdx-heart } Insiders only][7]{ .mdx-insiders }
+
+If you're using versioning, you might want to display a warning when the user
+visits any other version than the latest version. Using [theme extension][8],
+you can [define the `outdated` block][9]:
+
+``` { .html .annotate }
+{% block outdated %}
+  You're not viewing the latest version.
+  <a href="{{ '../' ~ base_url }}"> <!-- (1) -->
+    <strong>Click here to go to latest.</strong>
+  </a>
+{% endblock %}
+```
+
+1. Given this value for the `href` attribute, the link will always redirect to 
+   the root of your site, which will then redirect to the latest version. This
+   ensures that older versions of your site do not depend on a specific alias,
+   e.g. `latest`, to allow for changing the alias later on without breaking
+   earlier versions.
+
+This will render a version warning above the header:
+
+[![Version warning][10]][10]
+
+By default, the default version is identified by the `latest` alias. If you
+wish to set another alias as the latest version, e.g. `stable`, add the
+following to `mkdocs.yml`:
+
+``` yaml
+extra:
+  version:
+    default: stable
+```
+
+Make sure that this matches the [default version][11].
+
+  [7]: ../insiders/index.md
+  [8]: ../customization.md#extending-the-theme
+  [9]: ../customization.md#overriding-blocks-recommended
+  [10]: ../assets/screenshots/version-warning.png
+  [11]: #setting-a-default-version
+
+### Stay on page
+
+[:octicons-file-code-24: Source][7] ·
+[:octicons-heart-fill-24:{ .mdx-heart } Insiders only][7]{ .mdx-insiders }
+
+Insiders improves the user experience when switching between versions: if
+version A and B contain a page with the same path name, the user will stay on
+the current page:
+
+=== "New behavior"
+
+    ```
+    docs.example.com/0.1/     -> docs.example.com/0.2/
+    docs.example.com/0.1/foo/ -> docs.example.com/0.2/foo/
+    docs.example.com/0.1/bar/ -> docs.example.com/0.2/bar/
+    ```
+
+=== "Old behavior"
+
+    ```
+    docs.example.com/0.1/     -> docs.example.com/0.2/
+    docs.example.com/0.1/foo/ -> docs.example.com/0.2/
+    docs.example.com/0.1/bar/ -> docs.example.com/0.2/
+    ```
+
+<figure markdown="1">
+  <figcaption markdown="1">
+
+A demo is worth a thousand words — check it out at
+[squidfunk.github.io/mkdocs-material-example-versioning][4]
+
+  </figcaption>
+</figure>
+
+
 ## Usage
 
 While this section outlines the basic workflow for publishing new versions, 
-it's best to check out the [official documentation][4] to make yourself familar
+it's best to check out the [official documentation][6] to make yourself familar
 with [mike][1].
 
 ### Publishing a new version
@@ -86,8 +165,8 @@ mike deploy --push --update-aliases 0.1 latest
 Note that every version will be deployed as a subdirectory of your `site_url`,
 e.g.:
 
-- _docs.example.com/0.1_
-- _docs.example.com/0.2_
+- _docs.example.com/0.1/_
+- _docs.example.com/0.2/_
 - ...
 
 ### Setting a default version

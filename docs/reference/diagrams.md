@@ -17,7 +17,7 @@ popular and flexible solution for drawing diagrams.
 
 [:octicons-file-code-24: Source][2] ·
 :octicons-beaker-24: Experimental ·
-[:octicons-heart-fill-24:{: .tx-heart } Insiders only][2]{: .tx-insiders }
+[:octicons-heart-fill-24:{ .mdx-heart } Insiders only][2]{ .mdx-insiders }
 
 The [SuperFences][3] extension, which is part of [Python Markdown
 Extensions][4], allows for adding __custom fences__, which can be used to
@@ -42,7 +42,7 @@ load and initialize the [Mermaid.js][1] runtime when a page includes a [fenced
 - [x] Support for both, light and dark color schemes
 
 _While it's also possible to integrate [Mermaid.js][1] using existing
-third-party solutions[^2], the new native integration is recommended as it
+third-party plugins[^2], the new native integration is recommended as it
 ensures interoperability with all Material for MkDocs features._
 
   [^1]:
@@ -57,7 +57,7 @@ ensures interoperability with all Material for MkDocs features._
     in conjunction with the [mkdocs-minify-plugin][9] and doesn't adapt to
     dark mode.
 
-  [2]: ../insiders.md
+  [2]: ../insiders/index.md
   [3]: https://facelessuser.github.io/pymdown-extensions/extensions/superfences/
   [4]: https://facelessuser.github.io/pymdown-extensions/
   [5]: #usage
@@ -89,11 +89,17 @@ graph LR
 
 _Result_:
 
-[![Diagram][12]{: style="width: 100%; max-width: 594px" }][12]
+``` mermaid
+graph LR
+  A[Start] --> B{Error?};
+  B -->|Yes| C[Hmm...];
+  C --> D[Debug];
+  D --> B;
+  B ---->|No| E[Yay!];
+```
 
 _See the [official documentation][1] to learn about all available diagram 
 types._
 
   [10]: code-blocks.md
   [11]: #superfences
-  [12]: ../assets/screenshots/diagram.png

@@ -1,5 +1,5 @@
 ////
-/// Copyright (c) 2016-2020 Martin Donath <martin.donath@squidfunk.com>
+/// Copyright (c) 2016-2021 Martin Donath <martin.donath@squidfunk.com>
 ///
 /// Permission is hereby granted, free of charge, to any person obtaining a
 /// copy of this software and associated documentation files (the "Software"),
@@ -26,9 +26,9 @@
 
 // Icon definitions
 :root {
-  --md-nav-icon--prev: svg-load("@mdi/svg/svg/arrow-left.svg");
-  --md-nav-icon--next: svg-load("@mdi/svg/svg/chevron-right.svg");
-  --md-toc-icon: svg-load("@mdi/svg/svg/table-of-contents.svg");
+  --md-nav-icon--prev: svg-load("material/arrow-left.svg");
+  --md-nav-icon--next: svg-load("material/chevron-right.svg");
+  --md-toc-icon: svg-load("material/table-of-contents.svg");
 }
 
 // ----------------------------------------------------------------------------
@@ -125,6 +125,12 @@
       color: var(--md-accent-fg-color);
     }
 
+    // Navigation link on keyboard focus
+    &.focus-visible {
+      outline-color: var(--md-accent-fg-color);
+      outline-offset: px2rem(4px);
+    }
+
     // Navigation link to table of contents
     .md-nav--primary &[for="__toc"] {
       display: none;
@@ -139,7 +145,7 @@
       }
 
       // Hide table of contents
-      & ~ .md-nav {
+      ~ .md-nav {
         display: none;
       }
     }
@@ -456,7 +462,7 @@
       }
 
       // Show table of contents
-      & ~ .md-nav {
+      ~ .md-nav {
         display: flex;
       }
     }
@@ -496,7 +502,7 @@
       }
 
       // Show table of contents
-      & ~ .md-nav {
+      ~ .md-nav {
         display: flex;
       }
     }
@@ -624,13 +630,13 @@
     // Modifier for when navigation tabs are rendered
     &--lifted {
 
-      // Hide nested items on level 1 and site title
+      // Hide nested level 0 items and site title
       > .md-nav__list > .md-nav__item--nested,
       > .md-nav__title {
         display: none;
       }
 
-      // Hide level 1 items
+      // Hide level 0 items
       > .md-nav__list > .md-nav__item {
         display: none;
 
@@ -652,17 +658,17 @@
             scroll-snap-align: start;
           }
         }
-
-        // Adjust spacing for navigation item on level 2
-        > .md-nav__item {
-          padding-right: px2rem(12px);
-        }
       }
 
       // Hack: Always show active navigation tab on breakpoint screen, despite
       // of checkbox being checked or not. Fixes #1655.
       .md-nav[data-md-level="1"] {
         display: block;
+
+        // Adjust spacing for level 1 items
+        > .md-nav__list > .md-nav__item {
+          padding-right: px2rem(12px);
+        }
       }
     }
 

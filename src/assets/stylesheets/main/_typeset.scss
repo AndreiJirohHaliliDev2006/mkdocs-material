@@ -1,5 +1,5 @@
 ////
-/// Copyright (c) 2016-2020 Martin Donath <martin.donath@squidfunk.com>
+/// Copyright (c) 2016-2021 Martin Donath <martin.donath@squidfunk.com>
 ///
 /// Permission is hereby granted, free of charge, to any person obtaining a
 /// copy of this software and associated documentation files (the "Software"),
@@ -35,16 +35,20 @@ body,
 input {
   color: var(--md-typeset-color);
   font-feature-settings: "kern", "liga";
-  font-family: -apple-system, BlinkMacSystemFont, Helvetica, Arial, sans-serif;
+  font-family:
+    var(--md-text-font-family, _),
+    -apple-system, BlinkMacSystemFont, Helvetica, Arial, sans-serif;
 }
 
-// Define proportionally spaced fonts
+// Define monospaced fonts
 code,
 pre,
 kbd {
   color: var(--md-typeset-color);
   font-feature-settings: "kern";
-  font-family: SFMono-Regular, Consolas, Menlo, monospace;
+  font-family:
+    var(--md-code-font-family, _),
+    SFMono-Regular, Consolas, Menlo, monospace;
 }
 
 // ----------------------------------------------------------------------------
@@ -53,8 +57,8 @@ kbd {
 
 // Icon definitions
 :root {
-  --md-typeset-table--ascending: svg-load("@mdi/svg/svg/arrow-down.svg");
-  --md-typeset-table--descending: svg-load("@mdi/svg/svg/arrow-up.svg");
+  --md-typeset-table--ascending: svg-load("material/arrow-down.svg");
+  --md-typeset-table--descending: svg-load("material/arrow-up.svg");
 }
 
 // ----------------------------------------------------------------------------
@@ -73,11 +77,12 @@ kbd {
   }
 
   // Default spacing
-  p,
   ul,
   ol,
   dl,
-  blockquote {
+  figure,
+  blockquote,
+  pre {
     margin: 1em 0;
   }
 
@@ -138,6 +143,7 @@ kbd {
 
   // Horizontal separator
   hr {
+    display: flow-root;
     margin: 1.5em 0;
     border-bottom: px2rem(1px) solid var(--md-default-fg-color--lightest);
   }
@@ -158,9 +164,15 @@ kbd {
     &:hover {
       color: var(--md-accent-fg-color);
     }
+
+    // Text link on keyboard focus
+    &.focus-visible {
+      outline-color: var(--md-accent-fg-color);
+      outline-offset: px2rem(4px);
+    }
   }
 
-  // Code blocks
+  // Code block
   code,
   pre,
   kbd {
@@ -173,7 +185,7 @@ kbd {
     }
   }
 
-  // Inline code blocks
+  // Inline code block
   code {
     padding: 0 px2em(4px, 13.6px);
     font-size: px2em(13.6px);
@@ -203,14 +215,14 @@ kbd {
   }
 
   // Ensure link color in code blocks
-  a > code {
+  a code {
     color: currentColor;
   }
 
   // Unformatted content
   pre {
     position: relative;
-    margin: 1em 0;
+    display: flow-root;
     line-height: 1.4;
 
     // Code block
@@ -317,7 +329,6 @@ kbd {
         content: attr(title);
       }
     }
-
   }
 
   // Small text
@@ -339,6 +350,7 @@ kbd {
 
   // Blockquotes, possibly nested
   blockquote {
+    display: flow-root;
     padding-left: px2rem(12px);
     color: var(--md-default-fg-color--light);
     border-left: px2rem(4px) solid var(--md-default-fg-color--lighter);
@@ -360,6 +372,7 @@ kbd {
   // Unordered and ordered list
   ul,
   ol {
+    display: flow-root;
     margin-left: px2em(10px);
     padding: 0;
 
@@ -452,6 +465,7 @@ kbd {
 
   // Figure
   figure {
+    display: flow-root;
     width: fit-content;
     max-width: 100%;
     margin: 0 auto;
@@ -496,7 +510,7 @@ kbd {
     // Due to margin collapse because of the necessary inline-block hack, we
     // cannot increase the bottom margin on the table, so we just increase the
     // top margin on the following element
-    & + * {
+    + * {
       margin-top: 1.5em;
     }
 
